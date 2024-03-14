@@ -50,7 +50,9 @@ for _ in range(5):
     num5 = random.randint(1, 10)
     operation1 = random.choice(["+", "-"])
     operation2 = random.choice(["*", "/"])
-    problem = f"{num1} {operation1} {num2} {operation2} {num3} {operation1} {num4} {operation2} {num5}"
+    operation3 = random.choice(["/", "-"])
+    operation4 = random.choice(["*", "+"])
+    problem = f"{num1} {operation1} {num2} {operation2} {num3} {operation3} {num4} {operation4} {num5}"
     problems.append(problem)
 
 current_problem_index = 0
@@ -193,7 +195,7 @@ while running:
 
             # Calculate remaining time
             current_time = pygame.time.get_ticks()
-            remaining_time = max(0, 30000 - (current_time - start_time))
+            remaining_time = max(0, 15000 - (current_time - start_time))
             seconds_remaining = remaining_time // 1000
 
             # Display countdown timer in the top center corner
@@ -230,13 +232,32 @@ while running:
         pygame.display.flip()
 
     else:  # Game over state
-        # Display "Game Over" message
-        game_over_text = font.render("Game Over", True, WHITE)
-        game_over_rect = game_over_text.get_rect(center=(screen_width // 2, screen_height // 2 - 50))
+        # Create a surface with semi-transparent overlay
+        overlay = pygame.Surface((screen_width, screen_height))
+        overlay.set_alpha(128)  # Adjust transparency level (0-255)
+        overlay.fill((0, 0, 0))  # Fill with black color
+
+        # Blit the overlay onto the screen
+        screen.blit(overlay, (0, 0))
+        # Define font sizes
+        default_font_size = 24
+        game_over_font_size = 150
+
+        # Load default font
+        default_font = pygame.font.Font(None, default_font_size)
+
+        # Load font for "Game Over" text
+        game_over_font = pygame.font.Font(None, game_over_font_size)
+
+        # Display "Game Over" message with larger font size
+        game_over_text = game_over_font.render("Game Over", True, WHITE)
+        game_over_rect = game_over_text.get_rect(center=(screen_width // 2, screen_height // 2 - 100))  # Adjusted y-coordinate
         screen.blit(game_over_text, game_over_rect)
 
+
+
         # Display final score
-        final_score_text = font.render(f"Your Score: {score}", True, WHITE)
+        final_score_text = game_over_font.render(f"Score: {score}", True, WHITE)
         final_score_rect = final_score_text.get_rect(center=(screen_width // 2, screen_height // 2))
         screen.blit(final_score_text, final_score_rect)
 
