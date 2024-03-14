@@ -40,9 +40,9 @@ start_sound = pygame.mixer.Sound("assets/start.mp3")
 correct_sound = pygame.mixer.Sound("assets/correct.mp3")
 game_over_sound = pygame.mixer.Sound("assets/game_over.mp3")
 
-# Variables
+# Generate 10 random problems
 problems = []
-for _ in range(5):
+for _ in range(10):
     num1 = random.randint(1, 10)
     num2 = random.randint(1, 10)
     num3 = random.randint(1, 10)
@@ -69,8 +69,6 @@ text_input_rect = pygame.Rect(screen_width // 2 - 150, screen_height // 2 - 27 +
 border_width = 2
 border_color = WHITE
 
-
-
 # Cursor parameters
 cursor_color = WHITE
 cursor_width = 2
@@ -90,7 +88,7 @@ pygame.mixer.music.play(-1)  # Play the music on loop
 while menu_running:
     screen.fill(WHITE)
     screen.blit(background_image, (0, 0))
-    
+
     # Draw title with glowing effect
     title_text = title_font.render("PEMDAS GAME", True, WHITE)
     title_rect = title_text.get_rect(center=(screen_width // 2, 150))
@@ -100,7 +98,7 @@ while menu_running:
         text_surface.fill((255, 255, 255, alpha_value))
         text_surface.blit(title_text, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
         screen.blit(text_surface, title_rect)
-    
+
     # Draw sub-title
     sub_title_font = pygame.font.Font(None, 30)
     sub_title_text = sub_title_font.render("Developed by: Eunice Jamaica Mello & Mel Andrei Espinosa", True, WHITE)
@@ -120,7 +118,7 @@ while menu_running:
     exit_text_rect = exit_text.get_rect(center=exit_button_rect.center)
     screen.blit(start_text, start_text_rect)
     screen.blit(exit_text, exit_text_rect)
-    
+
     pygame.display.flip()
 
     # Event handling for main menu
@@ -195,14 +193,13 @@ while running:
 
             # Calculate remaining time
             current_time = pygame.time.get_ticks()
-            remaining_time = max(0, 15000 - (current_time - start_time))
+            remaining_time = max(0, 30000 - (current_time - start_time))
             seconds_remaining = remaining_time // 1000
 
             # Display countdown timer in the top center corner
             timer_text = font.render(f"Time Left: {seconds_remaining}", True, WHITE)
             timer_rect = timer_text.get_rect(midtop=(screen_width // 2, 10))
             screen.blit(timer_text, timer_rect)
-
 
             # Check if time is up
             if remaining_time <= 0:
@@ -253,8 +250,6 @@ while running:
         game_over_text = game_over_font.render("Game Over", True, WHITE)
         game_over_rect = game_over_text.get_rect(center=(screen_width // 2, screen_height // 2 - 100))  # Adjusted y-coordinate
         screen.blit(game_over_text, game_over_rect)
-
-
 
         # Display final score
         final_score_text = game_over_font.render(f"Score: {score}", True, WHITE)
@@ -310,6 +305,8 @@ while running:
                                 start_time = pygame.time.get_ticks()  # Reset timer
                                 if current_problem_index == len(problems):
                                     game_over = True
+                                    game_over_sound.play()
+                                    pygame.mixer.music.stop()  # Stop background music
                             else:
                                 result = "Incorrect! Try again."
                                 if current_problem_index < len(problems):
