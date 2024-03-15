@@ -145,6 +145,8 @@ start_time = pygame.time.get_ticks()  # Start the timer when the game loop begin
 cursor_blink_time = 500  # Blink interval in milliseconds
 last_blink_time = 0  # Time of the last cursor blink
 cursor_visible = True  # Initially visible
+time_up = False  # Variable to track if time is up for the current problem
+correct_answer = None  # Variable to store the correct answer
 
 while running:
     # Blit background image
@@ -156,70 +158,84 @@ while running:
             screen.blit(heart_image, (screen_width - 40 - i * 40, 10))
 
         if lives > 0:  # If the user still has lives, continue the game
-            # Display current problem
-            problem_text = problem_font.render(f"Problem {current_problem_index + 1}", True, WHITE)
-            problem_rect = problem_text.get_rect(center=(screen_width // 2, screen_height // 2 - 150))
-            screen.blit(problem_text, problem_rect)
+            if not time_up:  # If time is not up for the current problem
+                # Display current problem
+                problem_text = problem_font.render(f"Problem {current_problem_index + 1}", True, WHITE)
+                problem_rect = problem_text.get_rect(center=(screen_width // 2, screen_height // 2 - 150))
+                screen.blit(problem_text, problem_rect)
 
-            # Display equation with font size 100px
-            equation_text = pygame.font.Font(None, 100).render(problems[current_problem_index], True, WHITE)
-            equation_rect = equation_text.get_rect(center=(screen_width // 2, screen_height // 2 - 60))
-            screen.blit(equation_text, equation_rect)
+                # Display equation with font size 100px
+                equation_text = pygame.font.Font(None, 100).render(problems[current_problem_index], True, WHITE)
+                equation_rect = equation_text.get_rect(center=(screen_width // 2, screen_height // 2 - 60))
+                screen.blit(equation_text, equation_rect)
 
-            # Draw text input field border
-            pygame.draw.rect(screen, border_color, text_input_rect, border_width, border_radius=10)
+                # Draw text input field border
+                pygame.draw.rect(screen, border_color, text_input_rect, border_width, border_radius=10)
 
-            # Display user input and result
-            input_text = font.render(user_input, True, WHITE)
-            input_rect = input_text.get_rect(center=text_input_rect.center)
-            screen.blit(input_text, input_rect)
+                # Display user input and result
+                input_text = font.render(user_input, True, WHITE)
+                input_rect = input_text.get_rect(center=text_input_rect.center)
+                screen.blit(input_text, input_rect)
 
-            # Update cursor visibility
-            current_time = pygame.time.get_ticks()
-            if current_time - last_blink_time >= cursor_blink_time:
-                cursor_visible = not cursor_visible
-                last_blink_time = current_time
+                # Update cursor visibility
+                current_time = pygame.time.get_ticks()
+                if current_time - last_blink_time >= cursor_blink_time:
+                    cursor_visible = not cursor_visible
+                    last_blink_time = current_time
 
-            # Draw cursor
-            if cursor_visible:
-                cursor_position = input_rect.right + 2, input_rect.centery
-                pygame.draw.line(screen, cursor_color, (cursor_position[0], cursor_position[1] - 10),
-                                 (cursor_position[0], cursor_position[1] + 10), cursor_width)
+                # Draw cursor
+                if cursor_visible:
+                    cursor_position = input_rect.right + 2, input_rect.centery
+                    pygame.draw.line(screen, cursor_color, (cursor_position[0], cursor_position[1] - 10),
+                                     (cursor_position[0], cursor_position[1] + 10), cursor_width)
 
-            # Display score
-            score_text = font.render(f"Score: {score}", True, WHITE)
-            score_rect = score_text.get_rect(topleft=(10, 10))
-            screen.blit(score_text, score_rect)
+                # Display score
+                score_text = font.render(f"Score: {score}", True, WHITE)
+                score_rect = score_text.get_rect(topleft=(10, 10))
+                screen.blit(score_text, score_rect)
 
-            # Calculate remaining time
-            current_time = pygame.time.get_ticks()
-            remaining_time = max(0, 30000 - (current_time - start_time))
-            seconds_remaining = remaining_time // 1000
+                # Calculate remaining time
+                current_time = pygame.time.get_ticks()
+                remaining_time = max(0, 30000 - (current_time - start_time))
+                seconds_remaining = remaining_time // 1000
 
-            # Display countdown timer in the top center corner
-            timer_text = font.render(f"Time Left: {seconds_remaining}", True, WHITE)
-            timer_rect = timer_text.get_rect(midtop=(screen_width // 2, 10))
-            screen.blit(timer_text, timer_rect)
+                # Display countdown timer in the top center corner
+                timer_text = font.render(f"Time Left: {seconds_remaining}", True, WHITE)
+                timer_rect = timer_text.get_rect(midtop=(screen_width // 2, 10))
+                screen.blit(timer_text, timer_rect)
 
-            # Check if time is up
-            if remaining_time <= 0:
+                # Check if time is up
+                if remaining_time <= 0:
+                    time_up = True
+                    pygame.time.set_timer(pygame.USEREVENT, 3000)  # Set timer event for 3 seconds
+                    correct_answer = eval(problems[current_problem_index])  # Evaluate correct answer
+
+            else:  # If time is up for the current problem
+                # Display correct answer for 3 seconds
                 lives -= 1
+                correct_text = font.render(f"Time's up! Correct answer: {correct_answer:.2f}", True, RED)
+                correct_rect = correct_text.get_rect(center=(screen_width // 2, screen_height // 2))
+                screen.blit(correct_text, correct_rect)
+
+                # Update the display
+                pygame.display.flip()
+
+                # Wait for 3 seconds
+                pygame.time.delay(3000)
+
+                # Reset variables for the next problem
+                time_up = False
                 current_problem_index += 1
-                start_time = current_time
+                start_time = pygame.time.get_ticks()
                 user_input = ""
 
-                if lives <= 0:
-                    game_over = True
-                    result = "Game Over! No lives left."
-                    game_over_sound.play()  # Play game over sound
-                    pygame.mixer.music.stop()  # Stop background music
-                elif current_problem_index == len(problems):
+                if current_problem_index == len(problems):
                     game_over = True
                     game_over_sound.play()
                     pygame.mixer.music.stop()
 
-                # Play fail sound when lives decrease
-                pygame.mixer.Sound("assets/fail.mp3").play()
+                pygame.event.clear(pygame.USEREVENT)  
+
 
         else:  # If the user has no lives left, display "Game Over" and final score
             game_over = True
@@ -227,6 +243,7 @@ while running:
             pygame.mixer.music.stop()
 
         pygame.display.flip()
+
 
     else:  # Game over state
         # Create a surface with semi-transparent overlay
