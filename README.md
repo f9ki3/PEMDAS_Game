@@ -51,15 +51,15 @@ Contributions to improve the game are welcome! If you have any ideas, suggestion
 
 ---
 
-## License
-
-[Specify the license terms of your choice for the game.]
-
----
-
 ## Support
 
-For any inquiries or assistance regarding the game, please contact:
+For inquiries or assistance, please contact:
+
+- **Author:** Fyke Lleva
+- **Email:** floterina@gmail.com
+- **Facebook:** (https://web.facebook.com/FLOZ.STN)
+- **Linkedin:** (https://www.linkedin.com/in/fykkkie/)
+- **Website:** (https://f9ki3.onrender.com/)
 
 ---
 
