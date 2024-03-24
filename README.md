@@ -23,7 +23,6 @@ PEMDAS_GAME is a Python game built using the Pygame library. It is designed to t
 
 - **Scoring:**
 - Each correct answer earns points.
-- Each incorrect answer deducts points.
 - Lives are lost if the player fails to answer within the time limit.
 
 ---
