@@ -101,7 +101,7 @@ while menu_running:
 
     # Draw sub-title
     sub_title_font = pygame.font.Font(None, 30)
-    sub_title_text = sub_title_font.render("Developed by: Eunice Jamaica Mello & Mel Andrei Espinosa", True, WHITE)
+    sub_title_text = sub_title_font.render("Developed by: f9ki3", True, WHITE)
     sub_title_rect = sub_title_text.get_rect(center=(screen_width // 2, 540))
     screen.blit(sub_title_text, sub_title_rect)
 
